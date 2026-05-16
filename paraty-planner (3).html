@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paraty — 7 de Setembro</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f5f2ec;
+  --surface:  #ffffff;
+  --surface2: #f0ede6;
+  --border:   #e0dbd0;
+  --border2:  #cdc7bc;
+  --green:    #2d7a5f;
+  --green-lt: #e8f4ef;
+  --green-md: #b8ddd0;
+  --sand:     #b8923c;
+  --sand-lt:  #fdf6e8;
+  --coral:    #b84a32;
+  --coral-lt: #fceae6;
+  --blue:     #2c5f8a;
+  --blue-lt:  #e6eff7;
+  --text:     #1a1a1a;
+  --text2:    #555;
+  --text3:    #999;
+  --radius:   10px;
+  --shadow:   0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Geist',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+.header-top{display:flex;align-items:center;gap:10px;padding:13px 0 10px;}
+.logo{font-size:.95rem;font-weight:700;color:var(--green);}
+.logo-sub{font-size:.75rem;color:var(--text3);font-weight:400;margin-left:6px;}
+.save-badge{margin-left:auto;font-family:'Geist Mono',monospace;font-size:.62rem;color:var(--green);background:var(--green-lt);border:1px solid var(--green-md);border-radius:999px;padding:2px 10px;opacity:0;transition:opacity .4s;}
+.save-badge.show{opacity:1;}
+
+/* TABS */
+.tabs{display:flex;}
+.tab-btn{padding:10px 18px;background:transparent;border:none;color:var(--text3);font-family:'Geist',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green);}
+.tab-btn:hover:not(.active){color:var(--text2);}
+
+/* LAYOUT */
+.container{max-width:860px;margin:0 auto;padding:24px 16px 80px;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* SECTION */
+.section{margin-bottom:22px;}
+.section-title{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:9px;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+
+/* SLIDER ROW */
+.srow{display:flex;align-items:center;gap:16px;padding:13px 16px;border-bottom:1px solid var(--border);transition:background .1s;}
+.srow:last-child{border-bottom:none;}
+.srow:hover{background:var(--surface2);}
+.sleft{flex:1;}
+.slabel{font-size:.84rem;font-weight:500;color:var(--text);}
+.snote{font-size:.71rem;color:var(--text3);margin-top:1px;}
+.sright{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:100px;}
+.sval{font-family:'Geist Mono',monospace;font-size:.88rem;font-weight:500;color:var(--green);}
+input[type=range]{width:130px;accent-color:var(--green);height:3px;cursor:pointer;}
+
+/* PAX */
+.pax-header{display:grid;grid-template-columns:26px 1fr 110px 100px 90px 28px;gap:8px;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.pax-header span{font-size:.62rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);}
+.pax-row{display:grid;grid-template-columns:26px 1fr 110px 100px 90px 28px;gap:8px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);transition:background .1s;}
+.pax-row:last-child{border-bottom:none;}
+.pax-row:hover{background:var(--surface2);}
+.p-num{font-family:'Geist Mono',monospace;font-size:.7rem;color:var(--text3);text-align:center;}
+.p-name-inp{background:transparent;border:none;color:var(--text);font-family:'Geist',sans-serif;font-size:.84rem;font-weight:500;width:100%;outline:none;}
+.p-name-inp:focus{border-bottom:1.5px solid var(--green);}
+select.psel{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Geist',sans-serif;font-size:.72rem;border-radius:6px;padding:4px 6px;cursor:pointer;outline:none;width:100%;}
+select.psel:focus{border-color:var(--green);}
+.p-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.85rem;padding:3px 5px;border-radius:4px;transition:all .15s;}
+.p-del:hover{color:var(--coral);background:var(--coral-lt);}
+
+/* ADD ROW */
+.add-row{display:flex;gap:8px;margin-top:10px;}
+.add-inp{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Geist',sans-serif;font-size:.84rem;border-radius:var(--radius);padding:9px 12px;outline:none;}
+.add-inp:focus{border-color:var(--green);}
+.btn{background:var(--green);color:#fff;font-family:'Geist',sans-serif;font-weight:600;font-size:.8rem;border:none;border-radius:var(--radius);padding:9px 16px;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
+.btn:hover{opacity:.88;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);font-family:'Geist',sans-serif;font-size:.78rem;border-radius:var(--radius);padding:7px 14px;cursor:pointer;transition:all .15s;}
+.btn-outline:hover{border-color:var(--green);color:var(--green);}
+.btn-danger{background:transparent;border:1px solid var(--border);color:var(--text3);font-family:'Geist',sans-serif;font-size:.78rem;border-radius:var(--radius);padding:7px 14px;cursor:pointer;transition:all .15s;}
+.btn-danger:hover{border-color:var(--coral);color:var(--coral);}
+
+/* TRANSPORT PANELS */
+.tp{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;box-shadow:var(--shadow);overflow:hidden;}
+.tp-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);}
+.tp-head.bus{background:var(--blue-lt);border-bottom-color:#c5d9ea;}
+.tp-head.car{background:var(--green-lt);border-bottom-color:var(--green-md);}
+.tp-head.moto{background:var(--sand-lt);border-bottom-color:#e8d9b8;}
+.tp-title{font-size:.84rem;font-weight:600;}
+.tp-title.bus{color:var(--blue);}
+.tp-title.car{color:var(--green);}
+.tp-title.moto{color:var(--sand);}
+.tp-count{font-size:.72rem;color:var(--text3);}
+.tp-body{padding:12px 14px;}
+.tp-people{font-size:.82rem;color:var(--text2);margin-bottom:10px;}
+.tp-costs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
+.chip{font-size:.72rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:3px 9px;}
+.chip strong{color:var(--green);font-family:'Geist Mono',monospace;}
+.tp-per{font-size:.82rem;font-weight:600;color:var(--green);padding-top:10px;border-top:1px solid var(--border);}
+
+/* SUMMARY */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+@media(max-width:540px){.sum-grid{grid-template-columns:1fr 1fr;}}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center;box-shadow:var(--shadow);}
+.sc-label{font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.sc-val{font-family:'Geist Mono',monospace;font-size:1.25rem;font-weight:700;color:var(--text);}
+.sc-val.green{color:var(--green);}
+.sc-val.coral{color:var(--coral);}
+.sc-val.sand{color:var(--sand);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);}
+.sum-table{width:100%;border-collapse:collapse;font-size:.78rem;background:var(--surface);}
+.sum-table th{font-size:.62rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap;}
+.sum-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);}
+.sum-table tr:last-child td{border-bottom:none;}
+.sum-table tr:hover td{background:var(--surface2);}
+.mono{font-family:'Geist Mono',monospace;color:var(--green);font-weight:500;}
+.total-col{font-family:'Geist Mono',monospace;font-weight:700;color:var(--green);font-size:.84rem;}
+
+/* DANGER */
+.danger-zone{margin-top:28px;padding-top:20px;border-top:1px solid var(--border);}
+
+@media print{
+  .header,.tab-btn,button,.add-row,.danger-zone,#tab-sim,#tab-pax{display:none!important;}
+  #tab-sum{display:block!important;}
+  body{background:white;}
+  .sum-grid{grid-template-columns:repeat(3,1fr);}
+  .table-wrap{border:1px solid #ccc;box-shadow:none;}
+  .sum-card{border:1px solid #ccc;box-shadow:none;}
+}
+@media(max-width:620px){
+  .pax-header,.pax-row{grid-template-columns:24px 1fr 90px 28px;}
+  .pax-header span:nth-child(4),.pax-header span:nth-child(5),
+  .pax-row>*:nth-child(4),.pax-row>*:nth-child(5){display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Paraty 7/Set<span class="logo-sub">· Planejador</span></div>
+    <div class="save-badge" id="saveBadge">✓ salvo</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('sim',this)">Simulador</button>
+    <button class="tab-btn" onclick="switchTab('pax',this)">Participantes</button>
+    <button class="tab-btn" onclick="switchTab('sum',this)">Resumo</button>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══════════════════════════════
+     ABA 1 · SIMULADOR
+══════════════════════════════ -->
+<div class="tab-content active" id="tab-sim">
+
+  <div class="section">
+    <div class="section-title">Acomodação</div>
+    <div class="card">
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Preço total da casa (período)</div><div class="snote">Total do Airbnb — não por noite</div></div>
+        <div class="sright"><div class="sval" id="v-casa">R$3.166</div><input type="range" min="2000" max="8000" step="50" value="3166" id="s-casa" oninput="sliderChange()"></div>
+      </div>
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Número de noites</div></div>
+        <div class="sright"><div class="sval" id="v-noites">3</div><input type="range" min="2" max="5" step="1" value="3" id="s-noites" oninput="sliderChange()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Transporte — Ônibus</div>
+    <div class="card">
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Passagem ida + volta por pessoa</div><div class="snote">Costa Verde · Novo Rio → Paraty</div></div>
+        <div class="sright"><div class="sval" id="v-onibus">R$250</div><input type="range" min="150" max="350" step="10" value="250" id="s-onibus" oninput="sliderChange()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Transporte — Carro (valores por carro)</div>
+    <div class="card">
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Pedágio ida + volta</div><div class="snote">Estimativa Rio–Paraty</div></div>
+        <div class="sright"><div class="sval" id="v-pedagio">R$90</div><input type="range" min="50" max="220" step="10" value="90" id="s-pedagio" oninput="sliderChange()"></div>
+      </div>
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Gasolina ida + volta</div><div class="snote">~260 km × 2, ~R$6,40/L</div></div>
+        <div class="sright"><div class="sval" id="v-gasolina">R$220</div><input type="range" min="100" max="450" step="10" value="220" id="s-gasolina" oninput="sliderChange()"></div>
+      </div>
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Aluguel do carro (período)</div><div class="snote">R$0 = carro próprio</div></div>
+        <div class="sright"><div class="sval" id="v-aluguel">R$0</div><input type="range" min="0" max="2000" step="50" value="0" id="s-aluguel" oninput="sliderChange()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Transporte — Moto (valores por moto)</div>
+    <div class="card">
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Gasolina ida + volta</div><div class="snote">Moto ~25 km/L</div></div>
+        <div class="sright"><div class="sval" id="v-motogas">R$80</div><input type="range" min="30" max="200" step="5" value="80" id="s-motogas" oninput="sliderChange()"></div>
+      </div>
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Pedágio ida + volta</div><div class="snote">Moto paga meia em muitas praças</div></div>
+        <div class="sright"><div class="sval" id="v-motopedag">R$45</div><input type="range" min="20" max="130" step="5" value="45" id="s-motopedag" oninput="sliderChange()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Passeios</div>
+    <div class="card">
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Escuna por pessoa</div><div class="snote">Coletiva em feriado ~R$120–150</div></div>
+        <div class="sright"><div class="sval" id="v-escuna">R$150</div><input type="range" min="80" max="300" step="10" value="150" id="s-escuna" oninput="sliderChange()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Churrasco</div>
+    <div class="card">
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Total do grupo</div><div class="snote">Carne, carvão, descartáveis, petiscos</div></div>
+        <div class="sright"><div class="sval" id="v-churras">R$1.200</div><input type="range" min="300" max="4000" step="100" value="1200" id="s-churras" oninput="sliderChange()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Alimentação — Mercado</div>
+    <div class="card">
+      <div class="srow">
+        <div class="sleft"><div class="slabel">Total do grupo (período)</div><div class="snote">Café, almoço em casa, lanches, ingredientes</div></div>
+        <div class="sright"><div class="sval" id="v-mercado">R$400</div><input type="range" min="100" max="3000" step="50" value="400" id="s-mercado" oninput="sliderChange()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="danger-zone">
+    <button class="btn-danger" onclick="resetAll()">Resetar tudo</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     ABA 2 · PARTICIPANTES
+══════════════════════════════ -->
+<div class="tab-content" id="tab-pax">
+
+  <div class="section">
+    <div class="section-title">Lista de Participantes</div>
+    <div class="card">
+      <div class="pax-header">
+        <span>#</span><span>Nome</span><span>Status</span>
+        <span>Transporte</span><span>Carro</span><span></span>
+      </div>
+      <div id="paxList"></div>
+    </div>
+    <div class="add-row">
+      <input class="add-inp" id="addName" placeholder="Nome do participante..."
+             onkeydown="if(event.key==='Enter')addPerson()">
+      <button class="btn" onclick="addPerson()">+ Adicionar</button>
+    </div>
+  </div>
+
+  <div class="section" style="margin-top:28px">
+    <div class="section-title">Grupos de Transporte</div>
+    <div id="tpanels"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-outline" onclick="addCar()">+ Novo carro</button>
+      <button class="btn-outline" onclick="addMoto()">+ Nova moto</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     ABA 3 · RESUMO
+══════════════════════════════ -->
+<div class="tab-content" id="tab-sum">
+  <div class="sum-grid" id="sumCards"></div>
+  <div class="section">
+    <div class="section-title">Custo por Participante</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn" onclick="copiarResumo()">📋 Copiar resumo</button>
+      <button class="btn-outline" onclick="window.print()">🖨 Imprimir / PDF</button>
+    </div>
+    <div class="table-wrap">
+      <table class="sum-table">
+        <thead><tr>
+          <th>Nome</th><th>Acomod.</th><th>Transport.</th>
+          <th>Escuna</th><th>Churrasco</th><th>Mercado</th><th>Total</th><th>Status</th>
+        </tr></thead>
+        <tbody id="sumBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ── STATE ──────────────────────────────────────
+const KEY = 'paraty_v5';
+
+const DEF_SL = {
+  casa:3166, noites:3, onibus:250,
+  pedagio:90, gasolina:220, aluguel:0,
+  motogas:80, motopedag:45,
+  escuna:150, churras:1200, mercado:400
+};
+
+const INIT_PEOPLE = [
+  'Ricardo','Flora','Pedro','Gabi','Marlon','Nath','Thales',
+  'Gabi','Naoto','Marcus','Thamiris','Nicole','Geovanna','João','Rafa'
+].map((name,i)=>({id:i+1,name,status:'invited',transport:'bus',car:null}));
+
+const INIT_CARS = [
+  {id:'c1',label:'Carro 1',tipo:'alugado'},
+  {id:'c2',label:'Carro 2',tipo:'proprio'},
+  {id:'c3',label:'Carro 3',tipo:'proprio'},
+];
+
+const INIT_MOTOS = [
+  {id:'m1',label:'Moto 1'},
+  {id:'m2',label:'Moto 2'},
+];
+
+let sl      = {...DEF_SL};
+let people  = INIT_PEOPLE.map(p=>({...p}));
+let cars    = INIT_CARS.map(c=>({...c}));
+let motos   = INIT_MOTOS.map(m=>({...m}));
+let nextId  = 16;
+let nextCar = 4;
+let nextMoto= 3;
+
+// ── STORAGE ────────────────────────────────────
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify({sl,people,cars,motos,nextId,nextCar,nextMoto}));
+    const b=document.getElementById('saveBadge');
+    b.classList.add('show');
+    setTimeout(()=>b.classList.remove('show'),1600);
+  }catch(e){}
+}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY)||'{}');
+    if(d.sl)      sl     ={...DEF_SL,...d.sl};
+    if(d.people)  people =d.people;
+    if(d.cars)    cars   =d.cars;
+    if(d.motos)   motos  =d.motos;
+    if(d.nextId)  nextId =d.nextId;
+    if(d.nextCar) nextCar=d.nextCar;
+    if(d.nextMoto)nextMoto=d.nextMoto;
+  }catch(e){}
+}
+function resetAll(){
+  if(!confirm('Apagar tudo e voltar ao padrão?')) return;
+  localStorage.removeItem(KEY);
+  sl=({...DEF_SL});people=INIT_PEOPLE.map(p=>({...p}));
+  cars=INIT_CARS.map(c=>({...c}));motos=INIT_MOTOS.map(m=>({...m}));
+  nextId=16;nextCar=4;nextMoto=3;
+  applySliders();renderAll();
+}
+
+// ── SLIDERS ────────────────────────────────────
+const R=n=>'R$'+Math.round(n).toLocaleString('pt-BR');
+
+function applySliders(){
+  Object.keys(DEF_SL).forEach(k=>{
+    const s=document.getElementById('s-'+k);
+    const v=document.getElementById('v-'+k);
+    if(s) s.value=sl[k];
+    if(v) v.textContent=k==='noites'?sl[k]:R(sl[k]);
+  });
+}
+function sliderChange(){
+  Object.keys(DEF_SL).forEach(k=>{
+    const s=document.getElementById('s-'+k);
+    const v=document.getElementById('v-'+k);
+    if(s) sl[k]=+s.value;
+    if(v) v.textContent=k==='noites'?sl[k]:R(sl[k]);
+  });
+  save();renderPanels();renderSummary();
+}
+
+// ── PEOPLE ─────────────────────────────────────
+function addPerson(){
+  const inp=document.getElementById('addName');
+  const name=inp.value.trim();if(!name)return;
+  people.push({id:nextId++,name,status:'invited',transport:'bus',car:null});
+  inp.value='';save();renderPax();renderSummary();
+}
+function removePerson(id){
+  people=people.filter(p=>p.id!==id);
+  save();renderPax();renderSummary();
+}
+function setP(id,field,val){
+  const p=people.find(p=>p.id===id);if(!p)return;
+  p[field]=val;
+  if(field==='transport'&&val!=='car') p.car=null;
+  if(field==='transport'&&val!=='moto') p.moto=null;
+  save();renderPax();renderSummary();
+}
+
+function renderPax(){
+  const carOpts=cars.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
+  const motoOpts=motos.map(m=>`<option value="${m.id}">${m.label}</option>`).join('');
+  document.getElementById('paxList').innerHTML=people.map((p,i)=>{
+    let vehicleCell=`<span style="color:var(--text3);font-size:.72rem">—</span>`;
+    if(p.transport==='car'){
+      vehicleCell=`<select class="psel" onchange="setP(${p.id},'car',this.value);renderPanels()">
+        <option value="">— escolher —</option>
+        ${cars.map(c=>`<option value="${c.id}"${p.car===c.id?' selected':''}>${c.label}</option>`).join('')}
+      </select>`;
+    } else if(p.transport==='moto'){
+      vehicleCell=`<select class="psel" onchange="setP(${p.id},'moto',this.value);renderPanels()">
+        <option value="">— escolher —</option>
+        ${motos.map(m=>`<option value="${m.id}"${p.moto===m.id?' selected':''}>${m.label}</option>`).join('')}
+      </select>`;
+    }
+    return `<div class="pax-row">
+      <span class="p-num">${i+1}</span>
+      <div><input class="p-name-inp" value="${p.name}" onblur="setP(${p.id},'name',this.value)"></div>
+      <select class="psel" onchange="setP(${p.id},'status',this.value);renderSummary()">
+        <option value="invited"  ${p.status==='invited'  ?'selected':''}>Convidado</option>
+        <option value="confirmed"${p.status==='confirmed'?'selected':''}>✅ Confirmado</option>
+        <option value="out"      ${p.status==='out'      ?'selected':''}>❌ Desistiu</option>
+      </select>
+      <select class="psel" onchange="setP(${p.id},'transport',this.value);renderPax()">
+        <option value="bus" ${p.transport==='bus' ?'selected':''}>🚌 Ônibus</option>
+        <option value="car" ${p.transport==='car' ?'selected':''}>🚗 Carro</option>
+        <option value="moto"${p.transport==='moto'?'selected':''}>🏍 Moto</option>
+      </select>
+      <div>${vehicleCell}</div>
+      <button class="p-del" onclick="removePerson(${p.id})">✕</button>
+    </div>`;
+  }).join('');
+  renderPanels();
+}
+
+// ── CARS ───────────────────────────────────────
+function addCar(){
+  cars.push({id:'c'+nextCar,label:'Carro '+nextCar,tipo:'alugado'});
+  nextCar++;save();renderPax();renderSummary();
+}
+function removeCar(cid){
+  cars=cars.filter(c=>c.id!==cid);
+  people.forEach(p=>{if(p.car===cid)p.car=null;});
+  save();renderPax();renderSummary();
+}
+function setCarTipo(cid,tipo){
+  const c=cars.find(c=>c.id===cid);if(c)c.tipo=tipo;
+  save();renderPanels();renderSummary();
+}
+function addMoto(){
+  motos.push({id:'m'+nextMoto,label:'Moto '+nextMoto});
+  nextMoto++;save();renderPax();renderSummary();
+}
+function removeMoto(mid){
+  motos=motos.filter(m=>m.id!==mid);
+  people.forEach(p=>{if(p.moto===mid)p.moto=null;});
+  save();renderPax();renderSummary();
+}
+
+function carCost(cid){
+  const c=cars.find(c=>c.id===cid);
+  return sl.pedagio+sl.gasolina+(c&&c.tipo==='alugado'?sl.aluguel:0);
+}
+function motoCost(){ return sl.motogas+sl.motopedag; }
+
+function renderPanels(){
+  let html='';
+  const act=p=>p.status!=='out';
+
+  // BUS
+  const busers=people.filter(p=>p.transport==='bus'&&act(p));
+  if(busers.length){
+    html+=`<div class="tp">
+      <div class="tp-head bus">
+        <span>🚌</span><span class="tp-title bus">Ônibus</span>
+        <span class="tp-count">${busers.length} pessoa${busers.length>1?'s':''}</span>
+      </div>
+      <div class="tp-body">
+        <div class="tp-people">${busers.map(p=>p.name).join(', ')}</div>
+        <div class="tp-costs"><span class="chip">Passagem i+v: <strong>${R(sl.onibus)}</strong>/pessoa</span></div>
+        <div class="tp-per">Por pessoa: ${R(sl.onibus)}</div>
+      </div>
+    </div>`;
+  }
+
+  // MOTOS — grouped by moto id, cost split between piloto+garupa
+  const moters=people.filter(p=>p.transport==='moto'&&act(p));
+  if(moters.length){
+    const totalMoto=motoCost();
+    motos.forEach(moto=>{
+      const riders=people.filter(p=>p.moto===moto.id&&act(p));
+      if(!riders.length) return;
+      const perRider=totalMoto/riders.length; // 1 piloto = total; 2 = divide
+      const label=riders.length===1?'piloto':'piloto + garupa';
+      html+=`<div class="tp">
+        <div class="tp-head moto">
+          <span>🏍</span><span class="tp-title moto">${moto.label}</span>
+          <span class="tp-count">${riders.length} pessoa${riders.length>1?'s':''} · ${label}</span>
+          <button class="p-del" style="margin-left:auto" onclick="removeMoto('${moto.id}')">✕</button>
+        </div>
+        <div class="tp-body">
+          <div class="tp-people">${riders.map(p=>p.name).join(' + ')}</div>
+          <div class="tp-costs">
+            <span class="chip">Gasolina: <strong>${R(sl.motogas)}</strong></span>
+            <span class="chip">Pedágio: <strong>${R(sl.motopedag)}</strong></span>
+            <span class="chip">Total moto: <strong>${R(totalMoto)}</strong></span>
+          </div>
+          <div class="tp-per">Por pessoa: ${R(perRider)}${riders.length===2?' (racham os dois)':''}</div>
+        </div>
+      </div>`;
+    });
+    // show unassigned moto people
+    const unassigned=moters.filter(p=>!p.moto);
+    if(unassigned.length){
+      html+=`<div class="tp" style="border-color:#e8d9b8">
+        <div class="tp-head moto">
+          <span>⚠</span><span class="tp-title moto">Moto não atribuída</span>
+          <span class="tp-count">${unassigned.length} pessoa${unassigned.length>1?'s':''}</span>
+        </div>
+        <div class="tp-body">
+          <div class="tp-people" style="color:var(--text3)">${unassigned.map(p=>p.name).join(', ')}</div>
+          <div style="font-size:.78rem;color:var(--text3);margin-top:6px">Atribua uma moto na lista de participantes.</div>
+        </div>
+      </div>`;
+    }
+  }
+
+  // CARS
+  cars.forEach(car=>{
+    const members=people.filter(p=>p.car===car.id&&act(p));
+    const total=carCost(car.id);
+    const perP=members.length>0?total/members.length:0;
+    const aluguel=car.tipo==='alugado'?sl.aluguel:0;
+
+    html+=`<div class="tp">
+      <div class="tp-head car">
+        <span>🚗</span><span class="tp-title car">${car.label}</span>
+        <span class="tp-count">${members.length} pessoa${members.length!==1?'s':''}</span>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <select class="psel" style="width:auto" onchange="setCarTipo('${car.id}',this.value)">
+            <option value="alugado"${car.tipo==='alugado'?' selected':''}>Alugado</option>
+            <option value="proprio"${car.tipo==='proprio'?' selected':''}>Próprio</option>
+          </select>
+          <button class="p-del" onclick="removeCar('${car.id}')">✕</button>
+        </div>
+      </div>
+      <div class="tp-body">
+        <div class="tp-people">${members.length
+          ?members.map(p=>p.name).join(', ')
+          :'<span style="color:var(--text3)">Nenhum passageiro atribuído ainda</span>'}</div>
+        <div class="tp-costs">
+          <span class="chip">Pedágio: <strong>${R(sl.pedagio)}</strong></span>
+          <span class="chip">Gasolina: <strong>${R(sl.gasolina)}</strong></span>
+          <span class="chip">Aluguel: <strong>${R(aluguel)}</strong></span>
+          <span class="chip">Total carro: <strong>${R(total)}</strong></span>
+        </div>
+        <div class="tp-per">${members.length>0
+          ?`Por pessoa: ${R(perP)}`
+          :'⚠ Atribua passageiros na lista acima'}</div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('tpanels').innerHTML=html||'<p style="color:var(--text3);font-size:.84rem">Nenhum grupo formado.</p>';
+}
+
+// ── COSTS ──────────────────────────────────────
+function calcCosts(){
+  const active=people.filter(p=>p.status!=='out');
+  const N=active.length||1;
+  const aco=sl.casa/N;
+  const churr=sl.churras/N;
+  const merc=sl.mercado/N;
+  const esc=sl.escuna;
+
+  return people.map(p=>{
+    if(p.status==='out') return {...p,costs:{aco:0,tr:0,esc:0,churr:0,merc:0,total:0}};
+    let tr=0;
+    if(p.transport==='bus') tr=sl.onibus;
+    else if(p.transport==='moto'){
+      // split cost with garupa if assigned to same moto
+      if(p.moto){
+        const riders=people.filter(x=>x.moto===p.moto&&x.status!=='out');
+        tr=riders.length>0?motoCost()/riders.length:motoCost();
+      } else {
+        tr=motoCost(); // unassigned, assume solo
+      }
+    }
+    else if(p.transport==='car'&&p.car){
+      const m=people.filter(x=>x.car===p.car&&x.status!=='out');
+      tr=m.length>0?carCost(p.car)/m.length:carCost(p.car);
+    }
+    const total=aco+tr+esc+churr+merc;
+    return {...p,costs:{aco,tr,esc,churr,merc,total}};
+  });
+}
+
+// ── SUMMARY ────────────────────────────────────
+function renderSummary(){
+  const data=calcCosts();
+  const active=data.filter(p=>p.status!=='out');
+  const conf=data.filter(p=>p.status==='confirmed');
+  const tPrev=conf.reduce((s,p)=>s+p.costs.total,0);
+
+  document.getElementById('sumCards').innerHTML=`
+    <div class="sum-card"><div class="sc-label">Convidados</div><div class="sc-val">${people.filter(p=>p.status==='invited').length}</div></div>
+    <div class="sum-card"><div class="sc-label">Confirmados</div><div class="sc-val green">${conf.length}</div></div>
+    <div class="sum-card"><div class="sc-label">Desistiram</div><div class="sc-val coral">${people.filter(p=>p.status==='out').length}</div></div>
+    <div class="sum-card" style="grid-column:span 3"><div class="sc-label">Total estimado (confirmados)</div><div class="sc-val green" style="font-size:1.5rem">${R(tPrev)}</div></div>`;
+
+  document.getElementById('sumBody').innerHTML=data
+    .filter(p=>p.status!=='out')
+    .map(p=>`<tr>
+      <td style="font-weight:500">${p.name}</td>
+      <td class="mono">${R(p.costs.aco)}</td>
+      <td class="mono">${R(p.costs.tr)}</td>
+      <td class="mono">${R(p.costs.esc)}</td>
+      <td class="mono">${R(p.costs.churr)}</td>
+      <td class="mono">${R(p.costs.merc)}</td>
+      <td class="total-col">${R(p.costs.total)}</td>
+      <td>
+        <select onchange="setP(${p.id},'status',this.value);renderSummary()"
+          style="background:transparent;border:none;font-size:.72rem;color:var(--text);cursor:pointer;outline:none">
+          <option value="invited"  ${p.status==='invited'  ?'selected':''}>Convidado</option>
+          <option value="confirmed"${p.status==='confirmed'?'selected':''}>✅ Confirmado</option>
+          <option value="out"      ${p.status==='out'      ?'selected':''}>❌ Desistiu</option>
+        </select>
+      </td>
+    </tr>`).join('');
+}
+
+// ── EXPORT ─────────────────────────────────────
+function copiarResumo(){
+  const data=calcCosts().filter(p=>p.status!=='out');
+  const act=p=>p.status!=='out';
+  const linhas=[];
+
+  linhas.push('🌴 *PARATY — 7 DE SETEMBRO*');
+  linhas.push('');
+
+  // Grupos de transporte
+  linhas.push('*🚌 Ônibus*');
+  const busers=people.filter(p=>p.transport==='bus'&&act(p));
+  linhas.push(busers.length ? busers.map(p=>p.name).join(', ') : '—');
+  linhas.push('');
+
+  motos.forEach(moto=>{
+    const riders=people.filter(p=>p.moto===moto.id&&act(p));
+    if(!riders.length) return;
+    linhas.push(`*🏍 ${moto.label}*`);
+    linhas.push(riders.map(p=>p.name).join(' + '));
+    linhas.push('');
+  });
+
+  cars.forEach(car=>{
+    const members=people.filter(p=>p.car===car.id&&act(p));
+    if(!members.length) return;
+    const tipo=car.tipo==='alugado'?'alugado':'próprio';
+    linhas.push(`*🚗 ${car.label}* (${tipo})`);
+    linhas.push(members.map(p=>p.name).join(', '));
+    linhas.push('');
+  });
+
+  // Tabela de valores
+  linhas.push('*💰 Estimativa por pessoa*');
+  const maxNome=Math.max(...data.map(p=>p.name.length));
+  data.forEach(p=>{
+    const pad=p.name.padEnd(maxNome,' ');
+    linhas.push(`${pad}  →  ${R(p.costs.total)}`);
+  });
+  linhas.push('');
+
+  // Breakdown
+  linhas.push('*📋 Composição do valor*');
+  linhas.push(`Casa: ${R(sl.casa)} ÷ ${data.length}p`);
+  linhas.push(`Escuna: ${R(sl.escuna)}/pessoa`);
+  linhas.push(`Churrasco: ${R(sl.churras)} ÷ ${data.length}p`);
+  linhas.push(`Mercado: ${R(sl.mercado)} ÷ ${data.length}p`);
+  linhas.push(`Transporte: varia por modal`);
+
+  const texto=linhas.join('\n');
+  navigator.clipboard.writeText(texto).then(()=>{
+    const btn=event.target;
+    const orig=btn.textContent;
+    btn.textContent='✓ Copiado!';
+    setTimeout(()=>btn.textContent=orig,2000);
+  }).catch(()=>alert(texto));
+}
+
+// ── TABS ───────────────────────────────────────
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='sum') renderSummary();
+  if(name==='pax') renderPax();
+}
+
+// ── INIT ───────────────────────────────────────
+function renderAll(){ applySliders();renderPax();renderSummary(); }
+load(); renderAll();
+</script>
+</body>
+</html>
